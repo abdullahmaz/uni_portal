@@ -1,0 +1,39 @@
+Name                    Attendance              
+Aaqib Ahmed             P                       
+Abdul Haque             A                       
+Abu Hurairah            A                       
+Ahmad Saeed             A                       
+Ahmed Hassan            A                       
+Ahmed Shayan            A                       
+Anila Khan              A                       
+Arhum Khan              A                       
+Ayaan Khan              A                       
+Danish Riaz             A                       
+Farrah Khan             A                       
+Fasih Ur Rehman         A                       
+Fatima Asim             A                       
+Fatima Azfar            A                       
+Hamiz Ahmed             A                       
+Hassan Younas           A                       
+Huzaifa Jamil           A                       
+Huzaifa Khan            A                       
+Mahrukh Wahidi          A                       
+Manahil Kamran          A                       
+Meher Amir              A                       
+Mubashir Iqbal          A                       
+Muhammad Ahmed          A                       
+Muhammad Asim           A                       
+Muhammad Imran          A                       
+Muhammad Jameel         A                       
+Muhammad Talal          A                       
+Muhammad Umar           A                       
+Muhammad Zaid           A                       
+Qasim Rizwan            A                       
+Ruwaid Imran            A                       
+Saad Khurshid           A                       
+Saad Mehmood            A                       
+Salman Ali              A                       
+Shaheeruddin Shiekh     A                       
+Wajeeh Ul Hassan        A                       
+Waleed Nouman           A                       
+Zimal Alam              A                       

@@ -1,0 +1,39 @@
+NAME                    MARKS                   
+Aaqib Ahmed             4.09                    
+Abdul Haque             0                       
+Abu Hurairah            0                       
+Ahmad Saeed             0                       
+Ahmed Hassan            0                       
+Ahmed Shayan            0                       
+Anila Khan              0                       
+Arhum Khan              0                       
+Ayaan Khan              0                       
+Danish Riaz             0                       
+Farrah Khan             0                       
+Fasih Ur Rehman         0                       
+Fatima Asim             0                       
+Fatima Azfar            0                       
+Hamiz Ahmed             0                       
+Hassan Younas           0                       
+Huzaifa Jamil           0                       
+Huzaifa Khan            0                       
+Mahrukh Wahidi          0                       
+Manahil Kamran          0                       
+Meher Amir              0                       
+Mubashir Iqbal          0                       
+Muhammad Ahmed          0                       
+Muhammad Asim           0                       
+Muhammad Imran          0                       
+Muhammad Jameel         0                       
+Muhammad Talal          0                       
+Muhammad Umar           0                       
+Muhammad Zaid           0                       
+Qasim Rizwan            0                       
+Ruwaid Imran            0                       
+Saad Khurshid           0                       
+Saad Mehmood            0                       
+Salman Ali              0                       
+Shaheeruddin Shiekh     0                       
+Wajeeh Ul Hassan        0                       
+Waleed Nouman           0                       
+Zimal Alam              0                       
