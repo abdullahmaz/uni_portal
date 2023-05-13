@@ -320,7 +320,6 @@ void ImportSubjectiveQuestions(Subjective subj[], int& count,Teacher T[]){
     }
 }
 
-
 void SetUsername(Student S[]){
     int j=0;
     for(int i=0; i<11; i++){
@@ -430,31 +429,94 @@ bool timercheck(int start, int end, int timer){
     return false;
 }
 
-void MakeQuiz(Teacher T[], int& c1, int& c2, int& c3, int&time){
-    Quiz X(c1,c2,c3,time);
-    int temp;
+long long toTimestamp(int day, int month, int year, int hour, int minute, int second){
+    struct tm tm;
+    tm.tm_year = year - 1900;
+    tm.tm_mon = month - 1;
+    tm.tm_mday = day;
+    tm.tm_hour = hour;
+    tm.tm_min = minute;
+    tm.tm_sec = second;
+
+    time_t time = mktime(&tm);
+    return time;
+}
+
+int InputDateTime(long long &s, long long &e){
+    int day, month, year, hour, minute, second;
+
+    cout << "Enter date in the format MM/DD/YYYY: ";
+    cin >> month >> day >> year ;
+    cout << "Enter time in the format HH:MM:SS: ";
+    cin >> hour >> minute >> second;
+
+    if (month < 1 || month > 12) {
+      cout << "Invalid month" << endl;
+      return 1;
+    }
+    if (day < 1 || day > 31) {
+      cout << "Invalid day" << endl;
+      return 1;
+    }
+    if (year < 1900 || year > 2100) {
+      cout << "Invalid year" << endl;
+      return 1;
+    }
+    if (hour < 0 || hour > 23) {
+      cout << "Invalid hour" << endl;
+      return 1;
+    }
+    if (minute < 0 || minute > 59) {
+      cout << "Invalid minute" << endl;
+      return 1;
+    }
+    if (second < 0 || second > 59) {
+      cout << "Invalid second" << endl;
+      return 1;
+    }
+    s = toTimestamp(day, month, year, hour, minute, second);
+    e = toTimestamp(day, month, year, hour+1, minute, second);
+    return 1;
+}
+
+void MakeQuiz(Teacher T[]){
     char temp_input;
     for(int i=0; i<11; i++){
-        if(T[i].active){
+        if(T[i].active && T[i].quiz_active){
+            cout<<"Quiz has already been made !"<<endl;
+            break;
+        }
+        if(T[i].active && (T[i].quiz_active==0)){
+            int c1,c2,c3,time;
+            c1=c2=c3=0;
+            cout<<"How many T/F questions do you want (1-5): ";
+            cin>>c1;
+            cout<<"How many MCQ's do you want (1-5): ";
+            cin>>c2;
+            cout<<"How many Subjective questions do you want (1-5): ";
+            cin>>c3;
+            cout<<"Duration of Quiz(seconds): ";
+            cin>>time;
+            Quiz X(c1,c2,c3,time);
+            InputDateTime(X.start,X.end);
             ImportTFQuestions(X.TFQuestions,c1,T);
             ImportMCQQuestions(X.MCQQuestions,c2,T);
             ImportSubjectiveQuestions(X.SubjectiveQuestions,c3,T);
             T[i].Q = X;
-            temp = i;
+            X.display();
+            cout<<endl<<"Quiz successfully created !!"<<endl;
             break;
         }
     }
-    X.display();
-    cout<<endl<<"Quiz successfully created !!"<<endl;
     cout<<endl<<"Press any button to continue ..."<<endl;  
     temp_input = getch();
     return;
 }
 void AttemptQuiz(Teacher T[], Student S[]){
     int input,input1,temp=0, total_questions,x=0,timer = 10;
-    time_t start,end;
+    time_t start,end,current_time;
     char temp_input;
-    bool flag = false, timeup = false;
+    bool flag = false, flag1 = false, timeup = false;
     int indexes[11]{0};
     system("CLS");
     cout<<"Courses: "<<endl;
@@ -471,9 +533,19 @@ void AttemptQuiz(Teacher T[], Student S[]){
 
     for(int i=0; i<216; i++){
         if(S[i].active && S[i].courses[indexes[input-1]] && T[indexes[input-1]].quiz_active){
-            cout<<"!!! Quiz Available !!!"<<endl;
-            cout<<"Start ? (1/0): ";
-            cin>>input1;
+            flag1 = true;
+            current_time = time(0);
+            if(current_time < T[indexes[input-1]].Q.start){
+                cout<<"Quiz hasn't started yet!"<<endl;
+                break;
+            }else if(current_time > T[indexes[input-1]].Q.end){
+                cout<<"Quiz has expired!"<<endl;
+                break;
+            }else{
+                cout<<"!!! Quiz Available !!!"<<endl;
+                cout<<"Start ? (1/0): ";
+                cin>>input1;
+            }
             if(input1==0){
                 return;
             }
@@ -483,14 +555,13 @@ void AttemptQuiz(Teacher T[], Student S[]){
             S[i].attendance = 1;
             total_questions = T[indexes[input-1]].Q.totalquestions;
             timer = T[indexes[input-1]].Q.time;
+            T[indexes[input-1]].Q.marks[i]=0;
+            temp = i;
 
             system("CLS");
 
             if(input == 0)
                 return;
-
-            T[indexes[input-1]].Q.marks[i]=0;
-            temp = i;
 
             cout<<T[indexes[input-1]].course<<" Quiz"<<endl<<"Course Instructor: "<<T[indexes[input-1]].name<<endl<<endl;
             cout<<"T/F Questions: "<<endl;
@@ -506,6 +577,10 @@ void AttemptQuiz(Teacher T[], Student S[]){
                 cout<<endl;
                 if(S[i].tf_answers[k] == T[indexes[input-1]].Q.TFQuestions[k].answer){
                     T[indexes[input-1]].Q.marks[i] += 1;
+                    if(T[indexes[input-1]].Q.barGraphPerQuestion[k] == -1)
+                        T[indexes[input-1]].Q.barGraphPerQuestion[k] = 1;
+                    else    
+                        T[indexes[input-1]].Q.barGraphPerQuestion[k] += 1;
                 }
             }
             if(timeup == false){
@@ -525,6 +600,11 @@ void AttemptQuiz(Teacher T[], Student S[]){
                     cin>>S[i].mcq_answers[k];
                     if(T[indexes[input-1]].Q.MCQQuestions[k].options[S[i].mcq_answers[k]-1] == T[indexes[input-1]].Q.MCQQuestions[k].answer){
                         T[indexes[input-1]].Q.marks[i] += 1;
+                        T[indexes[input-1]].Q.barGraphPerQuestion[k+5] += 1;
+                        if(T[indexes[input-1]].Q.barGraphPerQuestion[k+5] == -1)
+                            T[indexes[input-1]].Q.barGraphPerQuestion[k+5] = 1;
+                        else    
+                            T[indexes[input-1]].Q.barGraphPerQuestion[k+5] += 1;
                     }
                 }
             }
@@ -551,7 +631,8 @@ void AttemptQuiz(Teacher T[], Student S[]){
     }
     if(flag){
         cout<<endl<<"Obtained Marks: "<<T[indexes[input-1]].Q.marks[temp]<<"/"<<total_questions<<endl;
-    }else{
+    }
+    if(flag1==false){
         cout<<"No Quizzes are available at the moment"<<endl;
     }
     cout<<endl<<"Press any button to continue ..."<<endl;
@@ -619,24 +700,15 @@ void TeacherMenu(Teacher T[], Student S[]){
         cout<<endl<<"2. Change Password"<<endl;
         cout<<endl<<"3. Generate Mark Sheet"<<endl;
         cout<<endl<<"4. Generate Attendance"<<endl;
-        cout<<endl<<"5. Sign Out"<<endl<<endl;
+        cout<<endl<<"5. See Bar Graph"<<endl;
+        cout<<endl<<"6. Sign Out"<<endl<<endl;
         
         cout<<"Select Option: "<<endl;
         cin>>option;
 
         if(option == 1){
             system("CLS");
-            int c1,c2,c3,time;
-            c1=c2=c3=0;
-            cout<<"How many T/F questions do you want (1-5): ";
-            cin>>c1;
-            cout<<"How many MCQ's do you want (1-5): ";
-            cin>>c2;
-            cout<<"How many Subjective questions do you want (1-5): ";
-            cin>>c3;
-            cout<<"Duration of Quiz(seconds): ";
-            cin>>time;
-            MakeQuiz(T,c1,c2,c3,time);
+            MakeQuiz(T);
         }else if(option == 2){
             for(int i=0; i<11; i++){
                 if(T[i].active){
@@ -666,6 +738,20 @@ void TeacherMenu(Teacher T[], Student S[]){
             cout<<endl<<"Press any button to continue ..."<<endl;
             temp = getch();  
         }else if(option == 5){
+            system("CLS");
+            for(int i=0; i<11; i++){
+                if(T[i].active){
+                    if(T[i].quiz_active)
+                        T[i].Q.printGraph();
+                    else
+                        cout<<"You haven't made a quiz yet !"<<endl;
+                        
+                    break;
+                }
+            }
+            cout<<endl<<"Press any button to continue ..."<<endl;
+            temp = getch();  
+        }else if(option == 6){
             for(int i=0; i<11; i++){
                 if(T[i].active){
                     T[i].active = 0;
@@ -722,7 +808,7 @@ bool login(int x, Student S[], Teacher T[]){
         cout<<"Enter Username: ";
         cin>>temp;    
         cout<<"Enter Password: ";
-        cin>>temp1;
+        temp1 = starpassword();
 
         if(CheckUsername(x,index,temp,S,T) && CheckPassword(x,temp,temp1,S,T)){
             system("CLS");
@@ -767,6 +853,8 @@ void menu(Student S[], Teacher T[]){
             return;
         }else{
             flag = true;
+            cin.clear();
+            cin.ignore();
         }
     }
 }

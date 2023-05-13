@@ -1,3 +1,19 @@
+string starpassword(){
+    string pass;
+    for (char ch; (ch = getch()) != '\r';) {
+        if (ch == '\b') {
+        if (!pass.empty()) {
+            pass.pop_back();
+            cout << "\b";
+        }
+        } else {
+            pass += ch;
+            cout << '*';
+        }
+    }
+    return pass;
+}
+
 class User{
     public:
     string name,username,password;
@@ -10,7 +26,7 @@ class User{
         int upper,lower,digit,spch;
         upper=lower=digit=spch=0;
         cout<<"Enter new password: ";
-        cin>>temp;
+        temp = starpassword();
         for(int i=0; temp[i]!='\0'; i++){
             if(isupper(temp[i])){
                 upper++;
@@ -27,7 +43,7 @@ class User{
             cout<<"Password Successfully Changed !!!"<<endl;
             password = temp; 
         }else{
-            cout<<"Invalid Password (Password Rules not followed)!!"<<endl;
+            cout<<endl<<"Invalid Password (Password Rules not followed)!!"<<endl;
         }
         cout<<endl<<"Press any button to continue ..."<<endl;  
         temp_input = getch();
